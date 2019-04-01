@@ -1,12 +1,10 @@
 const express = require('express');
 const server = express();
 const helmet = require('helmet');
-// add router(s) once they exist
-// i.e. const [name]Router = require('[router file path]');
+const usersRouter = require('./routers/users.router.js')
 
 server.use(express.json());
 server.use(helmet());
-// add router(s) once they exist
-// i.e. server.use('[base api path]', [name]Router);
+server.use('/api', usersRouter);
 
 module.exports = server;
