@@ -40,7 +40,7 @@ router.post('/register', async (req, res) => {
     }
 });
 
-// login a user
+// login a user if credentials match a registered user
 router.post('/login', async (req, res) => {
     try {
         let { username, password } = req.body;
@@ -52,11 +52,45 @@ router.post('/login', async (req, res) => {
         if (user && bcrypt.compareSync(password, user.password)) {
             res.status(200).json({ message: `Welcome ${user.username}!` });
         } else {
-            res.status(401).json({ message: `Invalid credentials` });
+            res.status(401).json({ message: `YOU SHALL NOT PASS!!!` });
         }
     } catch (error) {
         res.status(500).json(error);
     }
 });
+
+// retrieve all users if the user is logged in (done with middleware)
+router.get('/users', restricted, async (req, res) => {
+    try {
+        const users = await db('users')
+            .select('id', 'username', 'password');
+        
+        res.json(users);
+    } catch (error) {
+        res.send(error)
+    }
+});
+
+async function restricted(req, res, next) {
+    try {
+        const { username, password } = req.headers;
+
+        if (username && password) {
+            const user = await db('users')
+                .where({ username })
+                .first();
+    
+            if (user && bcrypt.compareSync(password, user.password)) {
+                next();
+            } else {
+                res.status(401).json({ message: `Wrong user and/or password provided` });
+            }
+        } else {
+            res.status(401).json({ message: `No user and/or password provided` })
+        }
+    } catch (error) {
+        res.status(500).json(error);
+    }
+}
 
 module.exports = router;
