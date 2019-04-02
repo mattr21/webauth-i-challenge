@@ -6,17 +6,13 @@ const bcrypt = require('bcryptjs');
 const knexConfig = {
     client: 'sqlite3',
     connection: {
-        filename: './data/auth.db3'
+        filename: './database/auth.db3'
     },
     useNullAsDefault: true,
 };
 
 const db = knex(knexConfig);
 
-// test to make sure server is setup
-router.get('/test', (req, res) => {
-    res.send('test');
-});
 
 // register a user
 router.post('/register', async (req, res) => {
@@ -58,39 +54,5 @@ router.post('/login', async (req, res) => {
         res.status(500).json(error);
     }
 });
-
-// retrieve all users if the user is logged in (done with middleware)
-router.get('/users', restricted, async (req, res) => {
-    try {
-        const users = await db('users')
-            .select('id', 'username', 'password'); 
-        
-        res.json(users);
-    } catch (error) {
-        res.send(error)
-    }
-});
-
-async function restricted(req, res, next) {
-    try {
-        const { username, password } = req.headers;
-
-        if (username && password) {
-            const user = await db('users')
-                .where({ username })
-                .first();
-    
-            if (user && bcrypt.compareSync(password, user.password)) {
-                next();
-            } else {
-                res.status(401).json({ message: `Wrong user and/or password provided` });
-            }
-        } else {
-            res.status(401).json({ message: `No user and/or password provided` })
-        }
-    } catch (error) {
-        res.status(500).json(error);
-    }
-}
 
 module.exports = router;
