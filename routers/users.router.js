@@ -63,7 +63,7 @@ router.post('/login', async (req, res) => {
 router.get('/users', restricted, async (req, res) => {
     try {
         const users = await db('users')
-            .select('id', 'username', 'password');
+            .select('id', 'username', 'password'); 
         
         res.json(users);
     } catch (error) {
