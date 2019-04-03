@@ -1,6 +1,7 @@
 const express = require('express');
 const helmet = require('helmet');
 const session = require('express-session');
+const KnexSessionStore = require('connect-session-knex')(session);
 
 const authRouter = require('../auth/auth-router.js')
 const usersRouter = require('../users/users-router.js')
@@ -17,6 +18,9 @@ const sessionConfig = {
     },
     resave: false, // avoid recreating unchanged sessions
     saveUninitialized: false, // GDPR compliance - can use cookies by default?
+    // store: new KnexSessionStore({
+    //     knex: 
+    // })
 };
 
 server.use(helmet());
