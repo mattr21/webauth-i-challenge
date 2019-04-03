@@ -24,7 +24,7 @@ const sessionConfig = {
         tablename: 'sessions',
         sidfieldname: 'sid',
         createtable: true,
-        clearInterval: 1000 * 60 * 30 // delete expired sessions
+        clearInterval: 1000 * 60 * 30 // delete expired sessions 
     })
 };
 
